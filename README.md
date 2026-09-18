@@ -2,8 +2,8 @@
 
 [![⚖️ PostgreSQL]][pg] [![🎬 Action]][action] [![🧪 Test]][ci]
 
-This action bundles and publishes a releae of a PostgreSQL extension or tool
-on [PGXN].
+This action archives and publishes a release of a PostgreSQL extension or
+tool on [PGXN].
 
 Example workflow:
 
@@ -28,9 +28,6 @@ jobs:
           dry-run: ${{ startsWith( github.ref, 'refs/tags/v' ) }}
 ```
 
-We strongly recommend using [workflow secrets] to manage your PGXN username
-and password.
-
 ## Input Parameters
 
 This action takes the following parameters:
@@ -42,6 +39,16 @@ This action takes the following parameters:
 | `submodules`      | boolean | false     | To include Git submodules in the release          |
 | `archive-options` | string  | ""        | Additional optoins to pass to `git archive`       |
 | `dry-run`         | boolean | false     | Print the release command, rather than execute it |
+| `rearchive`       | boolean | false     | Create the archive file even if it already edists |
+
+Details:
+
+*   We strongly recommend using [workflow secrets] to manage your PGXN
+    username and password
+*   When `submodules` is `true`, the action installs and uses
+    [git-archive-all]; modify `archive-options` accordingly
+*   If the release archive file already exists (`$extension-$version.zip`),
+    this action will not replace it unless `rearchive` is `true`
 
 ## Output
 
@@ -90,3 +97,4 @@ jobs:
   [PGXN]: https://pgxn.org "PostgreSQL Extension Network"
   [workflow secrets]: https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets
   [pgxn-tools]: https://github.com/pgxn/docker-pgxn-tools/ "Test image for PostgreSQL & PGXN extensions"
+  [git-archive-all] https://pypi.org/project/git-archive-all/ "git-archive-all on PyPI

@@ -20,6 +20,9 @@ inputs:
   dry-run:
     description: Print the release command, rather than execute it
     default: false
+  rearchive:
+    description: Create the `.zip` archive file even it it already exists
+    default: false
 outputs:
   archive:
     description: The zip archive file name created and released
@@ -54,11 +57,15 @@ runs:
         version="$(jq -r .version META.json)"
         release="${distname}-${version}"
 
-        if [ "${{ inputs.submodules }}" == 'true' ]; then
-            sudo pip install --root-user-action=ignore git-archive-all
-            git archive-all -v --prefix "${release}/" --force-submodules ${{ inputs.archive-options }} "${release}.zip"
+        if [ ! -e "$release.zip" ] || [ "${{ inputs.rearchive }}" == 'true' ]; then
+          if [ "${{ inputs.submodules }}" == 'true' ]; then
+              sudo pip install --root-user-action=ignore git-archive-all
+              git archive-all -v --prefix "${release}/" --force-submodules ${{ inputs.archive-options }} "${release}.zip"
+          else
+              git archive -v --format zip --prefix "${release}/" ${{ inputs.archive-options }} --output "${release}.zip" HEAD
+          fi
         else
-            git archive -v --format zip --prefix "${release}/" ${{ inputs.archive-options }} --output "${release}.zip" HEAD
+          printf '%s exists, skipping\n', "$release.zip"
         fi
 
         printf 'archive=%s.zip\n' "$release" >> "$GITHUB_OUTPUT"

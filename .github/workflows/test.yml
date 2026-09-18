@@ -1,4 +1,4 @@
-name: 🧪 Test
+name: ✅ Test
 on:
   push:
 jobs:
@@ -98,6 +98,8 @@ jobs:
         run: printf 'it me!\n' >> more.txt
       - name: Add submodule
         run: git submodule add https://github.com/theory/tag-test.git
+      - name: Create Archive
+        run: touch widget-1.0.0.zip
       - name: Dry Run
         uses: ./
         with:
@@ -106,9 +108,38 @@ jobs:
           archive-options: --include more.txt
           submodules: true
           dry-run: true
+          rearchive: true
       - name: Inspect Bundle
         run: |
           set -eu
           zipinfo -1 widget-1.0.0.zip > contents.txt
           printf 'widget-1.0.0/more.txt\nwidget-1.0.0/CHANGELOG.md\nwidget-1.0.0/LICENSE.md\nwidget-1.0.0/META.json\nwidget-1.0.0/README.md\nwidget-1.0.0/action.yml\nwidget-1.0.0/tag-test/README.md\nwidget-1.0.0/tag-test/is_main.go\n' > expect.txt
+          diff -u expect.txt contents.txt
+  existing:
+    name: Test Existing Archive
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v7
+      - name: Add file
+        run: printf 'it me!\n' >> more.txt
+      - name: Create Archive
+        run: git archive -v --format zip --prefix widget-1.0.0/ --add-file more.txt --output widget-1.0.0.zip HEAD
+      - name: Dry Run
+        uses: ./
+        id: pgxn
+        with:
+          username: meyo
+          password: s3cr3t
+          dry-run: true
+      - name: Outputs
+        run: echo "${{ toJSON(steps.pgxn.outputs) }}"
+      - name: Check output
+        if: steps.pgxn.outputs.archive != 'widget-1.0.0.zip'
+        run: echo 'Archive output not set'; exit 1
+      - name: Inspect Existing Bundle
+        run: |
+          set -eu
+          zipinfo -1 widget-1.0.0.zip > contents.txt
+          printf 'widget-1.0.0/\nwidget-1.0.0/CHANGELOG.md\nwidget-1.0.0/LICENSE.md\nwidget-1.0.0/META.json\nwidget-1.0.0/README.md\nwidget-1.0.0/action.yml\nwidget-1.0.0/more.txt\n' > expect.txt
           diff -u expect.txt contents.txt

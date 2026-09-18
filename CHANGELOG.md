@@ -7,6 +7,20 @@ All notable changes to this project will be documented in this file. It uses the
   [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
     "Semantic Versioning 2.0.0"
 
+## [v0.1.2] — 2026-09-18
+
+### ⚡ Improvements
+
+*   No longer builds the `.zip` file if it already exists, unless the new
+    `rearchive` input is `true`.
+
+### 📚 Documentation
+
+*   Added more details about the input options to the [README]
+
+  [v0.1.2]: https://github.com/pgxn/postgres-action/compare/v0.1.1...v0.1.2
+  [README]: README.md
+
 ## [v0.1.1] — 2026-09-17
 
 The theme of this release is *Oh right, THAT.*
@@ -16,7 +30,7 @@ The theme of this release is *Oh right, THAT.*
 *   Added the `archive` output, useful for a GitHub release in a subsequent
     step.
 
-  [v0.1.0]: https://github.com/pgxn/postgres-action/compare/v0.1.0...v0.1.1
+  [v0.1.1]: https://github.com/pgxn/postgres-action/compare/v0.1.0...v0.1.1
 
 ## [v0.1.0] — 2026-09-16
 
